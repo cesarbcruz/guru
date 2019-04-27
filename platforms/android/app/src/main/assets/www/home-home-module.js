@@ -57,7 +57,7 @@ var HomePageModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<ion-header>\n  <ion-toolbar>\n    <ion-title>\n      Guru\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content>\n    <ion-row justify-content-center align-items-center style='height: 100%'>\n        <ion-button (click)=\"start()\">Comando de voz</ion-button>\n    </ion-row>\n</ion-content>\n"
+module.exports = "<ion-header>\n  <ion-toolbar>\n    <ion-title>\n      Guru\n    </ion-title>\n  </ion-toolbar>\n</ion-header>\n\n<ion-content>\n    <ion-row padding justify-content-center align-items-center>\n        <ion-button (click)=\"start()\">Comando de voz</ion-button>\n    </ion-row>\n    <ion-row padding>\n        <ion-list style=\"width: 100%;\">\n              <ion-item\n                  (click)=\"viewLancamento(lancamento)\"\n                  *ngFor=\"let lancamento of lancamentos\"\n              >\n                  <ion-row style=\"width: 100%;\">\n                      <ion-col>\n                          {{lancamento.descricao}}\n                      </ion-col>\n                      <ion-col>\n                          {{lancamento.valor}}\n                      </ion-col>\n                  </ion-row>\n              </ion-item>\n        </ion-list>\n    </ion-row>\n    <ion-card>\n        <ion-card-content>\n          <h1>\n            Total: {{ valorTotal(lancamentos) | currency:'BRL':true }}\n          </h1>\n        </ion-card-content>\n    </ion-card>\n</ion-content>\n"
 
 /***/ }),
 
@@ -91,9 +91,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var HomePage = /** @class */ (function () {
-    function HomePage(navCtrl, speechRecognition) {
+    function HomePage(cd, navCtrl, speechRecognition) {
+        this.cd = cd;
         this.navCtrl = navCtrl;
         this.speechRecognition = speechRecognition;
+        this.lancamentos = [];
+        this.lancamentos = this.lancamentos.concat([{
+                descricao: "teste",
+                valor: 10.90
+            }]);
     }
     HomePage.prototype.ngOnInit = function () {
         var _this = this;
@@ -106,18 +112,49 @@ var HomePage = /** @class */ (function () {
         });
     };
     HomePage.prototype.start = function () {
+        var _this = this;
         this.speechRecognition.startListening()
             .subscribe(function (matches) {
-            alert(matches[0]);
+            _this.addLancamento(matches[0]);
         }, function (onerror) { return console.log('error:', onerror); });
+    };
+    HomePage.prototype.addLancamento = function (comando) {
+        var descricao = comando;
+        descricao = descricao.substring(0, descricao.indexOf("r$"));
+        var valor = comando;
+        valor = valor.substring(valor.indexOf("r$"), valor.length);
+        valor = valor.replace('r$', '');
+        valor = valor.replace('.', '');
+        valor = valor.replace(',', '.');
+        var valorNumerico;
+        valorNumerico = Number(valor.trim());
+        if (!isNaN(valorNumerico)) {
+            this.lancamentos = this.lancamentos.concat([{
+                    descricao: descricao,
+                    valor: valorNumerico
+                }]);
+            this.cd.detectChanges();
+        }
+    };
+    HomePage.prototype.viewLancamento = function (lancamento) {
+        alert(lancamento.descricao + ":" + lancamento.valor);
+    };
+    HomePage.prototype.valorTotal = function (lancamentos) {
+        var total = 0;
+        lancamentos.map(function (lanc) {
+            total = total + lanc.valor;
+        });
+        return total;
     };
     HomePage = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-home',
             template: __webpack_require__(/*! ./home.page.html */ "./src/app/home/home.page.html"),
+            changeDetection: _angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectionStrategy"].OnPush,
             styles: [__webpack_require__(/*! ./home.page.scss */ "./src/app/home/home.page.scss")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_ionic_angular__WEBPACK_IMPORTED_MODULE_3__["NavController"],
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectorRef"],
+            _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["NavController"],
             _ionic_native_speech_recognition_ngx__WEBPACK_IMPORTED_MODULE_2__["SpeechRecognition"]])
     ], HomePage);
     return HomePage;

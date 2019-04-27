@@ -7,7 +7,31 @@
 </ion-header>
 
 <ion-content>
-    <ion-row justify-content-center align-items-center style='height: 100%'>
+    <ion-row padding justify-content-center align-items-center>
         <ion-button (click)="start()">Comando de voz</ion-button>
     </ion-row>
+    <ion-row padding>
+        <ion-list style="width: 100%;">
+              <ion-item
+                  (click)="viewLancamento(lancamento)"
+                  *ngFor="let lancamento of lancamentos"
+              >
+                  <ion-row style="width: 100%;">
+                      <ion-col>
+                          {{lancamento.descricao}}
+                      </ion-col>
+                      <ion-col>
+                          {{lancamento.valor}}
+                      </ion-col>
+                  </ion-row>
+              </ion-item>
+        </ion-list>
+    </ion-row>
+    <ion-card>
+        <ion-card-content>
+          <h1>
+            Total: {{ valorTotal(lancamentos) | currency:'BRL':true }}
+          </h1>
+        </ion-card-content>
+    </ion-card>
 </ion-content>
