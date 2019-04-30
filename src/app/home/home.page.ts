@@ -20,8 +20,8 @@ export class HomePage {
     ) {
 
       this.lancamentos = [...this.lancamentos, {
-        descricao: "teste",
-        valor: 10.90
+        descricao: "Exemplo",
+        valor: 0.01
       }];
   }
 
@@ -50,7 +50,7 @@ export class HomePage {
 
   addLancamento(comando:string){
 
-    let descricao = comando;
+    let descricao:string = comando;
     descricao = descricao.substring(0, descricao.indexOf("r$"));
 
     let valor = comando;
@@ -60,7 +60,11 @@ export class HomePage {
     valor = valor.replace(',', '.');
 
     let valorNumerico : number;
-    valorNumerico = Number(valor.trim());
+    if(descricao.includes('crédito')){
+      valorNumerico = Number(valor.trim());
+    }else{
+      valorNumerico = -Number(valor.trim());
+    }
 
     if(!isNaN(valorNumerico)){
       this.lancamentos = [...this.lancamentos, {

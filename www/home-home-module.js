@@ -97,8 +97,8 @@ var HomePage = /** @class */ (function () {
         this.speechRecognition = speechRecognition;
         this.lancamentos = [];
         this.lancamentos = this.lancamentos.concat([{
-                descricao: "teste",
-                valor: 10.90
+                descricao: "Exemplo",
+                valor: 0.01
             }]);
     }
     HomePage.prototype.ngOnInit = function () {
@@ -127,7 +127,12 @@ var HomePage = /** @class */ (function () {
         valor = valor.replace('.', '');
         valor = valor.replace(',', '.');
         var valorNumerico;
-        valorNumerico = Number(valor.trim());
+        if (descricao.includes('crédito')) {
+            valorNumerico = Number(valor.trim());
+        }
+        else {
+            valorNumerico = -Number(valor.trim());
+        }
         if (!isNaN(valorNumerico)) {
             this.lancamentos = this.lancamentos.concat([{
                     descricao: descricao,
